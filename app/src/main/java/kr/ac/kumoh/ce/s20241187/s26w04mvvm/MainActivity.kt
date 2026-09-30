@@ -1,3 +1,4 @@
+// NOTE: 본인의 package 이름 사용할 것 !!!!!
 package kr.ac.kumoh.ce.s20241187.s26w04mvvm
 
 import android.os.Bundle
@@ -17,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import kr.ac.kumoh.ce.s20241187.s26w04mvvm.ui.theme.S26W04MvvmTheme
 
 class MainActivity : ComponentActivity() {
@@ -49,9 +51,10 @@ fun MainScreen() {
 
 @Composable
 fun Counter(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var count by remember { mutableIntStateOf(0) }
+    var count by rememberSaveable { mutableIntStateOf(0) }
+    var expanded by rememberSaveable { mutableStateOf(false)}
 
     Column(
         modifier = modifier // Modifier 사용하면 윗 여백 없음
@@ -82,20 +85,34 @@ fun Counter(
                 Text("+", fontSize = 30.sp)
             }
 
-            Button(
-                onClick = {
-                    count--
+            if (expanded) {
+                Button(
+                    onClick = {
+                        count--
+                        expanded = false
+                    }
+                ) {
+                    Text("-", fontSize = 30.sp)
                 }
-            ) {
-                Text("-", fontSize = 30.sp)
+
+                Button(
+                    onClick = {
+                        count = 0
+                        expanded = false
+                    }
+                ) {
+                    Text("0", fontSize = 30.sp)
+                }
             }
 
-            Button(
-                onClick = {
-                    count = 0
+            if (!expanded) {
+                Button(
+                    onClick = {
+                        expanded = true
+                    }
+                ) {
+                    Text("...", fontSize = 30.sp)
                 }
-            ) {
-                Text("0", fontSize = 30.sp)
             }
         }
     }
